@@ -11,7 +11,7 @@ export class PrismaService extends PrismaClient implements OnModuleInit, OnModul
     });
 
     // Tenant isolation middleware: inject tenantId into every operation
-    this.$use(async (params, next) => {
+    this.$use(async (params: any, next: any) => {
       // Only apply to tenant-schema models
       const tenantModels = ['RequestLog', 'Threat', 'Fingerprint', 'AuditLog'];
       if (!tenantModels.includes(params.model || '')) {

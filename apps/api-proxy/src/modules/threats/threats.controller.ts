@@ -30,7 +30,7 @@ export class ThreatsController {
     const where: any = { tenantId };
     if (severity) where.severity = severity;
 
-    const threats = await this.prisma.$transaction(async (tx) => {
+    const threats = await this.prisma.$transaction(async (tx: any) => {
       const data = await (tx as any).threat.findMany({
         where,
         skip: (pageNum - 1) * limitNum,
