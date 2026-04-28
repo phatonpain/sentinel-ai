@@ -1,0 +1,1 @@
+{"context":{"requestId":"f2-2","timestamp":"2026-04-26T21:00:00Z","method":"POST","path":"/api/search","headers":{},"body":{"q":"\u0027 UNION SELECT * FROM users --"},"sourceIp":"203.0.113.1","userAgent":"Mozilla/5.0"}}

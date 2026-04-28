@@ -1,0 +1,180 @@
+generator client {
+  provider        = "prisma-client-js"
+  previewFeatures = ["multiSchema"]
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+  schemas  = ["public", "tenant"]
+}
+
+// ============== PUBLIC SCHEMA ==============
+
+model Tenant {
+  id        String   @id @default(uuid())
+  name      String
+  plan      PlanType @default(FREE)
+  status    TenantStatus @default(ACTIVE)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  apiKeys ApiKey[]
+  billing Billing?
+
+  @@schema("public")
+}
+
+model ApiKey {
+  id        String   @id @default(uuid())
+  tenantId  String
+  tenant    Tenant   @relation(fields: [tenantId], references: [id])
+  keyHash   String   // bcrypt hash
+  scopes    String[] // e.g. ["read:threats", "write:rules"]
+  lastUsed  DateTime?
+  revokedAt DateTime?
+  createdAt DateTime @default(now())
+
+  @@index([tenantId])
+  @@schema("public")
+}
+
+model Billing {
+  id            String   @id @default(uuid())
+  tenantId      String   @unique
+  tenant        Tenant   @relation(fields: [tenantId], references: [id])
+  stripeCustomerId String?
+  stripeSubscriptionId String?
+  currentPeriodStart DateTime?
+  currentPeriodEnd   DateTime?
+  usageInspects   Int @default(0)
+  usageHoneypots  Int @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@schema("public")
+}
+
+// ============== TENANT SCHEMA (template) ==============
+// In production, each tenant gets its own schema cloned from this template.
+
+model RequestLog {
+  id          String   @id @default(uuid())
+  timestamp   DateTime @default(now()) @db.Timestamp(6)
+  method      String
+  path        String
+  headers     Json
+  body        Json?    // truncated if >10KB
+  sourceIp    String
+  userAgent   String
+  fingerprint String   // behavioral fingerprint hash
+  riskScore   Float    // 0.0 - 100.0
+  verdict     Verdict
+  threatType  String?
+  incidentId  String?  @unique
+  latencyMs   Float
+
+  @@index([timestamp])
+  @@index([fingerprint])
+  @@index([riskScore])
+  @@index([verdict])
+  @@index([incidentId])
+  @@schema("tenant")
+}
+
+model Threat {
+  id          String   @id @default(uuid())
+  incidentId  String   @unique
+  requestId   String
+  type        ThreatType
+  severity    Severity
+  confidence  Float
+  payload     Json?    // evidence
+  remediation Json?    // actions taken
+  createdAt   DateTime @default(now())
+  resolvedAt  DateTime?
+
+  @@index([createdAt])
+  @@index([type])
+  @@schema("tenant")
+}
+
+model Fingerprint {
+  id         String   @id @default(uuid())
+  identityId String   @unique // API key or userId
+  baseline   Json     // baseline statistics
+  lastSeen   DateTime @default(now())
+  anomalyScore Float @default(0)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@index([identityId])
+  @@schema("tenant")
+}
+
+model AuditLog {
+  id        String   @id @default(uuid())
+  action    String
+  actorId   String
+  resource  String
+  changes   Json?
+  ip        String
+  userAgent String
+  createdAt DateTime @default(now())
+
+  @@index([createdAt])
+  @@index([actorId])
+  @@schema("tenant")
+}
+
+// ============== ENUMS ==============
+
+enum PlanType {
+  FREE
+  PRO
+  BUSINESS
+  ENTERPRISE
+
+  @@schema("public")
+}
+
+enum TenantStatus {
+  ACTIVE
+  SUSPENDED
+  DELETED
+
+  @@schema("public")
+}
+
+enum Verdict {
+  ALLOW
+  BLOCK
+  CHALLENGE
+
+  @@schema("public")
+}
+
+enum ThreatType {
+  SQL_INJECTION
+  NOSQL_INJECTION
+  XSS
+  COMMAND_INJECTION
+  PATH_TRAVERSAL
+  SSRF
+  DLP_EXFILTRATION
+  RATE_LIMIT_VIOLATION
+  BEHAVIORAL_ANOMALY
+  HONEYPOT_TRIGGER
+  PROMPT_INJECTION
+
+  @@schema("public")
+}
+
+enum Severity {
+  LOW
+  MEDIUM
+  HIGH
+  CRITICAL
+
+  @@schema("public")
+}

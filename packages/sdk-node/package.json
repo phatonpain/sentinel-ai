@@ -1,0 +1,26 @@
+{
+  "name": "sentinel-ai",
+  "version": "0.1.0",
+  "description": "Sentinel AI SDK — Node.js middleware for Express/Fastify/NestJS",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "typecheck": "tsc --noEmit",
+    "lint": "eslint src/**/*.ts",
+    "test": "jest"
+  },
+  "dependencies": {
+    "@sentinel/shared-types": "workspace:*"
+  },
+  "devDependencies": {
+    "@sentinel/tsconfig": "workspace:*",
+    "@sentinel/eslint-config": "workspace:*",
+    "@types/express": "^4.17.21",
+    "@types/node": "^20.0.0",
+    "typescript": "^5.3.0"
+  },
+  "peerDependencies": {
+    "express": "^4.0.0 || ^5.0.0"
+  }
+}

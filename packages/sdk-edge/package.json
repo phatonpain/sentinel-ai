@@ -1,0 +1,20 @@
+{
+  "name": "sentinel-ai-edge",
+  "version": "0.1.0",
+  "description": "Sentinel AI SDK — Edge runtime (Cloudflare Workers, Vercel Edge)",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "typecheck": "tsc --noEmit",
+    "lint": "eslint src/**/*.ts"
+  },
+  "dependencies": {
+    "@sentinel/shared-types": "workspace:*"
+  },
+  "devDependencies": {
+    "@sentinel/tsconfig": "workspace:*",
+    "@sentinel/eslint-config": "workspace:*",
+    "typescript": "^5.3.0"
+  }
+}

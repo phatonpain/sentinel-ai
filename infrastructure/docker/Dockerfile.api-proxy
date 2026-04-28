@@ -1,0 +1,24 @@
+# syntax=docker/dockerfile:1
+FROM node:20-alpine AS builder
+WORKDIR /app
+RUN npm install -g pnpm
+COPY package.json pnpm-workspace.yaml turbo.json ./
+COPY packages ./packages
+COPY apps/api-proxy ./apps/api-proxy
+RUN pnpm install --frozen-lockfile
+RUN pnpm --filter api-proxy db:generate
+RUN pnpm --filter api-proxy build
+
+FROM node:20-alpine AS runner
+WORKDIR /app
+ENV NODE_ENV=production
+RUN npm install -g pnpm
+COPY --from=builder /app/package.json /app/pnpm-workspace.yaml /app/turbo.json ./
+COPY --from=builder /app/packages ./packages
+COPY --from=builder /app/apps/api-proxy/dist ./apps/api-proxy/dist
+COPY --from=builder /app/apps/api-proxy/prisma ./apps/api-proxy/prisma
+COPY --from=builder /app/apps/api-proxy/package.json ./apps/api-proxy/package.json
+RUN pnpm install --prod --frozen-lockfile
+RUN pnpm --filter api-proxy db:generate
+EXPOSE 3001
+CMD ["node", "apps/api-proxy/dist/main.js"]
