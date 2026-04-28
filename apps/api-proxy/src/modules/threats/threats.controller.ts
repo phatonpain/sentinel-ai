@@ -1,6 +1,7 @@
 import { Controller, Get, Param, Query, UseGuards, Version, Req } from '@nestjs/common';
 import { ApiTags, ApiSecurity } from '@nestjs/swagger';
 import { Request } from 'express';
+import { Prisma } from '@prisma/client';
 import { PrismaService } from '../../prisma/prisma.service';
 import { ApiKeyGuard } from '../../common/api-key.guard';
 import { TenantGuard } from '../../common/tenant.guard';
@@ -30,7 +31,7 @@ export class ThreatsController {
     const where: any = { tenantId };
     if (severity) where.severity = severity;
 
-    const threats = await this.prisma.$transaction(async (tx) => {
+    const threats = await this.prisma.$transaction(async (tx: Prisma.TransactionClient) => {
       const data = await (tx as any).threat.findMany({
         where,
         skip: (pageNum - 1) * limitNum,
