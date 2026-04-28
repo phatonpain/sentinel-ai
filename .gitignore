@@ -3,7 +3,7 @@ node_modules/
 .pnpm-store/
 
 # Build outputs
-dist/
+# dist/    # TEMPORARIAMENTE DESCOMENTADO para deploy no Railway (bypass build quebrado)
 build/
 .next/
 out/

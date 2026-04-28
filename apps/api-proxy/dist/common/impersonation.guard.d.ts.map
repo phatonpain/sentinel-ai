@@ -1,0 +1,1 @@
+{"version":3,"file":"impersonation.guard.d.ts","sourceRoot":"","sources":["../../src/common/impersonation.guard.ts"],"names":[],"mappings":"AAAA,OAAO,EAAE,WAAW,EAAE,gBAAgB,EAAkC,MAAM,gBAAgB,CAAC;AAE/F,qBACa,kBAAmB,YAAW,WAAW;IACpD,OAAO,CAAC,QAAQ,CAAC,gBAAgB,CAQ/B;IAEF,WAAW,CAAC,OAAO,EAAE,gBAAgB,GAAG,OAAO;CAYhD"}
