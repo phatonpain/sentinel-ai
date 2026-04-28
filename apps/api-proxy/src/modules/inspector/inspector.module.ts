@@ -1,4 +1,5 @@
 import { Module } from '@nestjs/common';
+import { AuthModule } from '../auth/auth.module';
 import { InspectorController } from './inspector.controller';
 import { InspectorService } from './inspector.service';
 import { InspectorEngine } from './inspector.engine';
@@ -15,6 +16,7 @@ import { AlertsGateway } from '../websocket/alerts.gateway';
 
 @Module({
   imports: [
+    AuthModule,
     ShieldModule,
     FingerprintModule,
     RemediationModule,

@@ -8,6 +8,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.InspectorModule = void 0;
 const common_1 = require("@nestjs/common");
+const auth_module_1 = require("../auth/auth.module");
 const inspector_controller_1 = require("./inspector.controller");
 const inspector_service_1 = require("./inspector.service");
 const inspector_engine_1 = require("./inspector.engine");
@@ -27,6 +28,7 @@ exports.InspectorModule = InspectorModule;
 exports.InspectorModule = InspectorModule = __decorate([
     (0, common_1.Module)({
         imports: [
+            auth_module_1.AuthModule,
             shield_module_1.ShieldModule,
             fingerprint_module_1.FingerprintModule,
             remediation_module_1.RemediationModule,
