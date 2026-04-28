@@ -4,6 +4,8 @@
   "description": "Sentinel AI API Proxy — NestJS core engine",
   "scripts": {
     "build": "nest build",
+    "build:verify": "npm run build && node -e \"const fs=require('fs');const p='dist/modules/inspector/dto/inspect-request.dto.js';if(!fs.existsSync(p)){console.error('MISSING: '+p);process.exit(1)}console.log('OK: '+p);\"",
+    "postbuild": "node -e \"const fs=require('fs');const p='dist/modules/inspector/dto/inspect-request.dto.js';if(!fs.existsSync(p)){console.error('CRITICAL: DTO files missing from dist. Aborting.');process.exit(1)}\"",
     "dev": "nest start --watch",
     "start:prod": "node dist/main",
     "lint": "eslint src/**/*.ts",
