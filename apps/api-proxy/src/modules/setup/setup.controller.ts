@@ -14,16 +14,19 @@ export class SetupController {
     @Body() dto: { name: string; email?: string },
   ) {
     const setupSecret = process.env.SETUP_SECRET;
-    if (!setupSecret) {
-      throw new HttpException('SETUP_SECRET not configured', HttpStatus.FORBIDDEN);
-    }
-    if (secret !== setupSecret) {
-      throw new HttpException('Invalid setup secret', HttpStatus.FORBIDDEN);
+    const existing = await this.prisma.tenant.findFirst();
+
+    // Se já existe tenant, exige secret
+    if (existing) {
+      if (!setupSecret || secret !== setupSecret) {
+        throw new HttpException('Invalid setup secret', HttpStatus.FORBIDDEN);
+      }
+      throw new HttpException('Tenant already exists', HttpStatus.CONFLICT);
     }
 
-    const existing = await this.prisma.tenant.findFirst();
-    if (existing) {
-      throw new HttpException('Tenant already exists', HttpStatus.CONFLICT);
+    // Se não existe tenant ainda e não há SETUP_SECRET, permite bootstrap inicial
+    if (setupSecret && secret !== setupSecret) {
+      throw new HttpException('Invalid setup secret', HttpStatus.FORBIDDEN);
     }
 
     const tenant = await this.prisma.tenant.create({
