@@ -29,11 +29,11 @@ let SetupController = class SetupController {
         // Se já existe tenant, exige secret correto
         if (existing) {
             if (!setupSecret || secret !== setupSecret) {
-                throw new common_1.HttpException('Invalid setup secret', common_1.HttpStatus.FORBIDDEN);
+                throw new common_1.HttpException('Bootstrap not allowed: invalid secret', common_1.HttpStatus.FORBIDDEN);
             }
             throw new common_1.HttpException('Tenant already exists', common_1.HttpStatus.CONFLICT);
         }
-        // Primeiro bootstrap: não exige secret quando não há nenhum tenant ainda
+        // Primeiro bootstrap: permite criar tenant sem secret (seguro pois db está vazio)
         const tenant = await this.prisma.tenant.create({
             data: {
                 name: dto.name || 'Default Tenant',
