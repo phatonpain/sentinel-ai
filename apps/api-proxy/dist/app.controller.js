@@ -41,7 +41,7 @@ let AppController = class AppController {
             timestamp: new Date().toISOString(),
             services: { database: dbStatus, redis: redisStatus },
             databaseError: dbError,
-            deployVersion: 'db-push-2026-04-29-v2',
+            deployVersion: 'db-push-2026-04-29-v3',
             version: process.env.npm_package_version || '1.0.0',
         };
     }

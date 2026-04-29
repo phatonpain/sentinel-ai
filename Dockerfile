@@ -1,7 +1,8 @@
 # Production Dockerfile — usa dist/ pré-compilado (bypass build quebrado)
 # CACHE INVALIDATION: 2026-04-29T03:25:00Z
 FROM node:20-alpine
-ARG CACHE_BUST=202604290325
+ARG CACHE_BUST=202604290326
+ENV CACHE_BUST=$CACHE_BUST
 WORKDIR /app
 
 RUN apk add --no-cache openssl postgresql-client
