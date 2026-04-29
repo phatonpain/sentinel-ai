@@ -9,6 +9,7 @@ export declare class AppController {
             database: string;
             redis: string;
         };
+        databaseError: any;
         version: string;
     }>;
 }

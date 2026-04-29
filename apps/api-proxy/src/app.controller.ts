@@ -8,12 +8,14 @@ export class AppController {
   @Get('health')
   async health() {
     let dbStatus = 'ok';
+    let dbError = null;
     let redisStatus = 'ok';
 
     try {
       await this.prisma.$queryRaw`SELECT 1`;
-    } catch {
+    } catch (err: any) {
       dbStatus = 'error';
+      dbError = err?.message || String(err);
     }
 
     try {
@@ -27,6 +29,7 @@ export class AppController {
       status: dbStatus === 'ok' && redisStatus === 'ok' ? 'healthy' : 'degraded',
       timestamp: new Date().toISOString(),
       services: { database: dbStatus, redis: redisStatus },
+      databaseError: dbError,
       version: process.env.npm_package_version || '1.0.0',
     };
   }
