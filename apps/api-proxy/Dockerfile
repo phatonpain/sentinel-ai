@@ -1,5 +1,6 @@
 # Production Dockerfile — usa dist/ pré-compilado (bypass build quebrado)
 FROM node:20-alpine
+ARG CACHE_BUST=202604290230
 WORKDIR /app
 
 RUN apk add --no-cache openssl
