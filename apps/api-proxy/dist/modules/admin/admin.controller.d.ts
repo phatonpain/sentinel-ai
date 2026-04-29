@@ -13,10 +13,10 @@ export declare class AdminController {
     listTenants(): Promise<{
         tenants: {
             id: string;
-            createdAt: Date;
             name: string;
-            status: import("@prisma/client").$Enums.TenantStatus;
             plan: import("@prisma/client").$Enums.PlanType;
+            status: import("@prisma/client").$Enums.TenantStatus;
+            createdAt: Date;
         }[];
     }>;
     createApiKey(tenantId: string): Promise<{

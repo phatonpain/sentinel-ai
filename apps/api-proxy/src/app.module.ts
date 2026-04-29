@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { PrismaModule } from './prisma/prisma.module';
+import { SetupModule } from './modules/setup/setup.module';
 import { InspectorModule } from './modules/inspector/inspector.module';
 import { ShieldModule } from './modules/shield/shield.module';
 import { AuthModule } from './modules/auth/auth.module';
@@ -29,6 +30,7 @@ import { appConfig } from './config/app.config';
       load: [appConfig],
     }),
     PrismaModule,
+    SetupModule,
     InspectorModule,
     ShieldModule,
     AuthModule,
