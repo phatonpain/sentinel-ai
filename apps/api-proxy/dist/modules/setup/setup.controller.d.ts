@@ -7,10 +7,23 @@ export declare class SetupController {
         email?: string;
     }): Promise<{
         tenantId: string;
+        apiKey: string | null;
+        name: string;
+        plan: import("@prisma/client").$Enums.PlanType;
+        createdAt: Date;
+        recovered: boolean;
+        statusCode?: undefined;
+        message?: undefined;
+        error?: undefined;
+        code?: undefined;
+        meta?: undefined;
+    } | {
+        tenantId: string;
         apiKey: string;
         name: string;
         plan: import("@prisma/client").$Enums.PlanType;
         createdAt: Date;
+        recovered?: undefined;
         statusCode?: undefined;
         message?: undefined;
         error?: undefined;
@@ -27,6 +40,7 @@ export declare class SetupController {
         name?: undefined;
         plan?: undefined;
         createdAt?: undefined;
+        recovered?: undefined;
     }>;
 }
 //# sourceMappingURL=setup.controller.d.ts.map

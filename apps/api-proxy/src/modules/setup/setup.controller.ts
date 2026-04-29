@@ -17,12 +17,23 @@ export class SetupController {
       const setupSecret = process.env.SETUP_SECRET;
       const existing = await this.prisma.tenant.findFirst();
 
-    // Se já existe tenant, exige secret correto
+    // Se já existe tenant, exige secret correto e retorna dados existentes
     if (existing) {
       if (!setupSecret || secret !== setupSecret) {
         throw new HttpException('Bootstrap not allowed: invalid secret', HttpStatus.FORBIDDEN);
       }
-      throw new HttpException('Tenant already exists', HttpStatus.CONFLICT);
+      const apiKey = await this.prisma.apiKey.findFirst({
+        where: { tenantId: existing.id },
+        orderBy: { createdAt: 'asc' },
+      });
+      return {
+        tenantId: existing.id,
+        apiKey: apiKey?.keyHash || null,
+        name: existing.name,
+        plan: existing.plan,
+        createdAt: existing.createdAt,
+        recovered: true,
+      };
     }
 
     // Primeiro bootstrap: permite criar tenant sem secret (seguro pois db está vazio)
