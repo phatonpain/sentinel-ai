@@ -29,4 +29,4 @@ RUN npx prisma generate
 RUN test -f /app/apps/api-proxy/dist/modules/inspector/dto/inspect-request.dto.js
 
 EXPOSE 3000
-CMD sh -c "psql \"$DATABASE_URL\" -c 'CREATE SCHEMA IF NOT EXISTS tenant;' && npx prisma db push --accept-data-loss && npx prisma migrate deploy && node dist/main.js"
+CMD sh -c "psql \"$DATABASE_URL\" -c 'CREATE SCHEMA IF NOT EXISTS tenant;' || true; npx prisma db push --accept-data-loss || true; npx prisma migrate deploy || true; node dist/main.js"
