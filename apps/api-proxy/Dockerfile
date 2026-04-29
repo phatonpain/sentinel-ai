@@ -27,4 +27,4 @@ RUN npx prisma generate
 RUN test -f /app/apps/api-proxy/dist/modules/inspector/dto/inspect-request.dto.js
 
 EXPOSE 3000
-CMD sh -c "npx prisma migrate deploy && node dist/main.js"
+CMD sh -c "npx prisma db push --accept-data-loss && npx prisma migrate deploy && node dist/main.js"
