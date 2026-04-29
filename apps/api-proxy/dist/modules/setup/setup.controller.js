@@ -24,38 +24,44 @@ let SetupController = class SetupController {
         this.prisma = prisma;
     }
     async bootstrap(secret, dto) {
-        const setupSecret = process.env.SETUP_SECRET;
-        const existing = await this.prisma.tenant.findFirst();
-        // Se já existe tenant, exige secret correto
-        if (existing) {
-            if (!setupSecret || secret !== setupSecret) {
-                throw new common_1.HttpException('Bootstrap not allowed: invalid secret', common_1.HttpStatus.FORBIDDEN);
+        try {
+            const setupSecret = process.env.SETUP_SECRET;
+            const existing = await this.prisma.tenant.findFirst();
+            // Se já existe tenant, exige secret correto
+            if (existing) {
+                if (!setupSecret || secret !== setupSecret) {
+                    throw new common_1.HttpException('Bootstrap not allowed: invalid secret', common_1.HttpStatus.FORBIDDEN);
+                }
+                throw new common_1.HttpException('Tenant already exists', common_1.HttpStatus.CONFLICT);
             }
-            throw new common_1.HttpException('Tenant already exists', common_1.HttpStatus.CONFLICT);
-        }
-        // Primeiro bootstrap: permite criar tenant sem secret (seguro pois db está vazio)
-        const tenant = await this.prisma.tenant.create({
-            data: {
-                name: dto.name || 'Default Tenant',
-                plan: 'ENTERPRISE',
-                status: 'ACTIVE',
-            },
-        });
-        const apiKeyRaw = `sentinel_sk_${Buffer.from((0, uuid_1.v4)()).toString('base64url')}`;
-        await this.prisma.apiKey.create({
-            data: {
+            // Primeiro bootstrap: permite criar tenant sem secret (seguro pois db está vazio)
+            const tenant = await this.prisma.tenant.create({
+                data: {
+                    name: dto.name || 'Default Tenant',
+                    plan: 'ENTERPRISE',
+                    status: 'ACTIVE',
+                },
+            });
+            const apiKeyRaw = `sentinel_sk_${Buffer.from((0, uuid_1.v4)()).toString('base64url')}`;
+            await this.prisma.apiKey.create({
+                data: {
+                    tenantId: tenant.id,
+                    keyHash: apiKeyRaw,
+                    scopes: ['read:threats', 'write:rules', 'admin'],
+                },
+            });
+            return {
                 tenantId: tenant.id,
-                keyHash: apiKeyRaw,
-                scopes: ['read:threats', 'write:rules', 'admin'],
-            },
-        });
-        return {
-            tenantId: tenant.id,
-            apiKey: apiKeyRaw,
-            name: tenant.name,
-            plan: tenant.plan,
-            createdAt: tenant.createdAt,
-        };
+                apiKey: apiKeyRaw,
+                name: tenant.name,
+                plan: tenant.plan,
+                createdAt: tenant.createdAt,
+            };
+        }
+        catch (err) {
+            console.error('[Setup] Bootstrap failed:', err);
+            throw new common_1.HttpException({ message: 'Bootstrap failed', error: err?.message || String(err) }, common_1.HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 };
 exports.SetupController = SetupController;

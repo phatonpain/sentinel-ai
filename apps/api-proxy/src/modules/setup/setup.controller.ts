@@ -13,8 +13,9 @@ export class SetupController {
     @Headers('x-setup-secret') secret: string,
     @Body() dto: { name: string; email?: string },
   ) {
-    const setupSecret = process.env.SETUP_SECRET;
-    const existing = await this.prisma.tenant.findFirst();
+    try {
+      const setupSecret = process.env.SETUP_SECRET;
+      const existing = await this.prisma.tenant.findFirst();
 
     // Se já existe tenant, exige secret correto
     if (existing) {
@@ -50,5 +51,12 @@ export class SetupController {
       plan: tenant.plan,
       createdAt: tenant.createdAt,
     };
+    } catch (err: any) {
+      console.error('[Setup] Bootstrap failed:', err);
+      throw new HttpException(
+        { message: 'Bootstrap failed', error: err?.message || String(err) },
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
   }
 }
