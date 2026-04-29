@@ -1,6 +1,7 @@
 # Production Dockerfile — usa dist/ pré-compilado (bypass build quebrado)
+# CACHE INVALIDATION: 2026-04-29T03:20:00Z
 FROM node:20-alpine
-ARG CACHE_BUST=202604290230
+ARG CACHE_BUST=202604290320
 WORKDIR /app
 
 RUN apk add --no-cache openssl

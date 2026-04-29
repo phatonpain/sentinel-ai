@@ -10,6 +10,7 @@ export declare class AppController {
             redis: string;
         };
         databaseError: any;
+        deployVersion: string;
         version: string;
     }>;
 }
