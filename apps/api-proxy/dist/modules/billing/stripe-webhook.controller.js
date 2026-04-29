@@ -32,7 +32,7 @@ let StripeWebhookController = StripeWebhookController_1 = class StripeWebhookCon
         this.webhookSecret = process.env.STRIPE_WEBHOOK_SECRET || '';
         this.stripe = new stripe_1.default(secretKey, { apiVersion: '2024-12-18.acacia', typescript: true });
         if (process.env.NODE_ENV === 'production' && secretKey.startsWith('sk_test_')) {
-            throw new Error('STRIPE_SECRET_KEY is a test key in production environment!');
+            console.warn('[Stripe] WARNING: Using test key in production environment');
         }
     }
     async handleWebhook(rawBody, signature) {

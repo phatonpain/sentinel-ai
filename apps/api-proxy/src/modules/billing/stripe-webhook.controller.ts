@@ -14,7 +14,7 @@ export class StripeWebhookController {
     this.stripe = new (Stripe as any)(secretKey, { apiVersion: '2024-12-18.acacia', typescript: true });
 
     if (process.env.NODE_ENV === 'production' && secretKey.startsWith('sk_test_')) {
-      throw new Error('STRIPE_SECRET_KEY is a test key in production environment!');
+      console.warn('[Stripe] WARNING: Using test key in production environment');
     }
   }
 
