@@ -60,14 +60,20 @@ let SetupController = class SetupController {
         }
         catch (err) {
             console.error('[Setup] Bootstrap failed:', err);
-            throw new common_1.HttpException({ message: 'Bootstrap failed', error: err?.message || String(err) }, common_1.HttpStatus.INTERNAL_SERVER_ERROR);
+            return {
+                statusCode: 500,
+                message: 'Bootstrap failed',
+                error: err?.message || String(err),
+                code: err?.code,
+                meta: err?.meta,
+            };
         }
     }
 };
 exports.SetupController = SetupController;
 __decorate([
     (0, common_1.Post)('setup'),
-    openapi.ApiResponse({ status: 201 }),
+    openapi.ApiResponse({ status: 201, type: Object }),
     __param(0, (0, common_1.Headers)('x-setup-secret')),
     __param(1, (0, common_1.Body)()),
     __metadata("design:type", Function),

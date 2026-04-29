@@ -11,6 +11,22 @@ export declare class SetupController {
         name: string;
         plan: import("@prisma/client").$Enums.PlanType;
         createdAt: Date;
+        statusCode?: undefined;
+        message?: undefined;
+        error?: undefined;
+        code?: undefined;
+        meta?: undefined;
+    } | {
+        statusCode: number;
+        message: string;
+        error: any;
+        code: any;
+        meta: any;
+        tenantId?: undefined;
+        apiKey?: undefined;
+        name?: undefined;
+        plan?: undefined;
+        createdAt?: undefined;
     }>;
 }
 //# sourceMappingURL=setup.controller.d.ts.map

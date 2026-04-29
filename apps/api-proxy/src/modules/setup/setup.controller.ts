@@ -53,10 +53,13 @@ export class SetupController {
     };
     } catch (err: any) {
       console.error('[Setup] Bootstrap failed:', err);
-      throw new HttpException(
-        { message: 'Bootstrap failed', error: err?.message || String(err) },
-        HttpStatus.INTERNAL_SERVER_ERROR,
-      );
+      return {
+        statusCode: 500,
+        message: 'Bootstrap failed',
+        error: err?.message || String(err),
+        code: err?.code,
+        meta: err?.meta,
+      };
     }
   }
 }
