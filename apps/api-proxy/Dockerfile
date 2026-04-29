@@ -1,26 +1,29 @@
+# Production Dockerfile — usa dist/ pré-compilado (bypass build quebrado)
 FROM node:20-alpine
 WORKDIR /app
 
-# Instala dependências do monorepo (workspace root + api-proxy)
+RUN apk add --no-cache openssl
+
+# Copia config do workspace e instala deps
 COPY package*.json ./
 COPY pnpm-workspace.yaml ./
 COPY pnpm-lock.yaml ./
-COPY apps/api-proxy/package*.json ./apps/api-proxy/
-COPY packages ./packages
 COPY tsconfig*.json ./
+COPY apps/api-proxy/package*.json ./apps/api-proxy/
 
-# Instala pnpm e dependências
 RUN npm install -g pnpm && pnpm install --frozen-lockfile
 
-# Copia o restante do código
-COPY apps/api-proxy ./apps/api-proxy
+# Copia o dist/ pré-compilado e o schema Prisma
+COPY apps/api-proxy/dist ./apps/api-proxy/dist
+COPY apps/api-proxy/prisma ./apps/api-proxy/prisma
 
-# Build do app
-RUN cd apps/api-proxy && npm run build
+WORKDIR /app/apps/api-proxy
 
-# Verificação explícita — falha o build se o DTO não estiver presente
-RUN ls -la /app/apps/api-proxy/dist/modules/inspector/dto/
+# Gera o Prisma Client (necessário em runtime)
+RUN npx prisma generate
+
+# Verificação defensiva — falha o build se o DTO não estiver presente
 RUN test -f /app/apps/api-proxy/dist/modules/inspector/dto/inspect-request.dto.js
 
 EXPOSE 3000
-CMD ["node", "apps/api-proxy/dist/main.js"]
+CMD ["node", "dist/main.js"]
