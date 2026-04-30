@@ -66,7 +66,7 @@ export function PricingSection() {
 
   const handleSetup = async () => {
     try {
-      const res = await fetch('https://api-proxy-production-28ff.up.railway.app/v1/setup', {
+      const res = await fetch('/api/setup', {
         method: 'POST',
         headers: {
           'X-Setup-Secret': 'sentinel-bootstrap-2026',
