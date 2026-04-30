@@ -39,10 +39,23 @@ async function bootstrap() {
 
   // CORS
   app.enableCors({
-    origin: process.env.DASHBOARD_URL || 'http://localhost:3000',
+    origin: [
+      'https://sentinel-ai.one',
+      'https://www.sentinel-ai.one',
+      'http://localhost:3000',
+      'http://localhost:3002',
+      ...(process.env.DASHBOARD_URL ? [process.env.DASHBOARD_URL] : []),
+    ],
     credentials: true,
     methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
-    allowedHeaders: ['Content-Type', 'Authorization', 'X-Sentinel-Api-Key'],
+    allowedHeaders: [
+      'Content-Type',
+      'Accept',
+      'Authorization',
+      'X-Sentinel-Api-Key',
+      'X-Setup-Secret',
+      'X-Tenant-Id',
+    ],
   });
 
   // Swagger
