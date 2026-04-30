@@ -25,7 +25,7 @@ export function Footer() {
         body: JSON.stringify({ name: 'New Tenant' }),
       });
 
-      if (res.status === 200) {
+      if (res.ok) {
         const data = await res.json();
         setToast({
           show: true,

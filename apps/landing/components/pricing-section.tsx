@@ -75,7 +75,7 @@ export function PricingSection() {
         body: JSON.stringify({ name: 'New Tenant' }),
       });
 
-      if (res.status === 200) {
+      if (res.ok) {
         const data = await res.json();
         setToast({
           show: true,
@@ -116,13 +116,60 @@ export function PricingSection() {
     }
   };
 
-  const handlePro = () => {
-    setToast({
-      show: true,
-      type: 'info',
-      title: 'Coming Soon',
-      message: 'Pro plan coming soon. Join the waitlist at hello@sentinel-api.dev',
-    });
+  const handlePro = async () => {
+    try {
+      const res = await fetch('/api/checkout', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ plan: 'PRO' }),
+      });
+      const data = await res.json();
+      if (data.url) {
+        window.location.href = data.url;
+      } else {
+        setToast({
+          show: true,
+          type: 'error',
+          title: 'Checkout Error',
+          message: data.error || 'Failed to create checkout session.',
+        });
+      }
+    } catch {
+      setToast({
+        show: true,
+        type: 'error',
+        title: 'Network Error',
+        message: 'Could not connect to checkout. Please try again later.',
+      });
+    }
+  };
+
+  const handleContactSales = async () => {
+    try {
+      const res = await fetch('/api/checkout', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ plan: 'ENTERPRISE' }),
+      });
+      const data = await res.json();
+      if (data.url) {
+        window.location.href = data.url;
+      } else {
+        setToast({
+          show: true,
+          type: 'error',
+          title: 'Checkout Error',
+          message: data.error || 'Failed to create checkout session.',
+        });
+      }
+    } catch {
+      setToast({
+        show: true,
+        type: 'error',
+        title: 'Network Error',
+        message: 'Could not connect to checkout. Please try again later.',
+      });
+    }
   };
 
   return (
@@ -219,8 +266,8 @@ export function PricingSection() {
                   </button>
                 )}
                 {plan.name === 'Enterprise' && (
-                  <a
-                    href="mailto:hello@sentinel-api.dev"
+                  <button
+                    onClick={handleContactSales}
                     className={`mt-8 block w-full rounded-xl px-4 py-3 text-center text-sm font-semibold transition-all ${
                       plan.highlighted
                         ? 'bg-gradient-to-r from-sentinel-purple to-sentinel-cyan text-white hover:opacity-90'
@@ -228,7 +275,7 @@ export function PricingSection() {
                     }`}
                   >
                     {plan.cta}
-                  </a>
+                  </button>
                 )}
               </motion.div>
             ))}

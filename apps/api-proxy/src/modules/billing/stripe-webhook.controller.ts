@@ -40,6 +40,11 @@ export class StripeWebhookController {
     this.logger.log(`Stripe event received: ${event.type}`);
 
     switch (event.type) {
+      case 'checkout.session.completed': {
+        const session = event.data.object;
+        await this.handleCheckoutCompleted(session);
+        break;
+      }
       case 'invoice.payment_succeeded': {
         const invoice = event.data.object;
         await this.handlePaymentSucceeded(invoice);
@@ -67,6 +72,31 @@ export class StripeWebhookController {
     return { received: true };
   }
 
+  private async handleCheckoutCompleted(session: any) {
+    const tenantId = session.metadata?.tenantId;
+    const plan = session.metadata?.plan;
+
+    if (!tenantId || !plan) {
+      this.logger.warn('Missing tenantId or plan in checkout session metadata');
+      return;
+    }
+
+    const requestLimit = plan === 'PRO' ? 1000 : plan === 'ENTERPRISE' ? 10000 : 100;
+
+    await this.prisma.tenant.update({
+      where: { id: tenantId },
+      data: {
+        stripeCustomerId: session.customer as string,
+        stripeSubscriptionId: session.subscription as string,
+        plan: plan,
+        billingStatus: 'ACTIVE',
+        requestLimit: requestLimit,
+      },
+    });
+
+    this.logger.log(`Tenant ${tenantId} upgraded to ${plan} via checkout`);
+  }
+
   private async handlePaymentSucceeded(invoice: any) {
     const tenantId = invoice.subscription_details?.metadata?.tenantId;
     if (!tenantId) {
@@ -75,7 +105,7 @@ export class StripeWebhookController {
     }
     await this.prisma.tenant.update({
       where: { id: tenantId },
-      data: { status: 'ACTIVE' },
+      data: { status: 'ACTIVE', billingStatus: 'ACTIVE' },
     });
     this.logger.log(`Tenant ${tenantId} activated after payment`);
   }
@@ -85,34 +115,62 @@ export class StripeWebhookController {
     if (!tenantId) return;
     await this.prisma.tenant.update({
       where: { id: tenantId },
-      data: { status: 'SUSPENDED' },
+      data: { billingStatus: 'PAST_DUE' },
     });
-    this.logger.warn(`Tenant ${tenantId} suspended after payment failure`);
+    this.logger.warn(`Tenant ${tenantId} marked past due after payment failure`);
   }
 
   private async handleSubscriptionDeleted(subscription: any) {
     const tenantId = subscription.metadata?.tenantId;
-    if (!tenantId) return;
+    if (!tenantId) {
+      // Fallback: try to find by subscription ID
+      const tenant = await this.prisma.tenant.findFirst({
+        where: { stripeSubscriptionId: subscription.id },
+      });
+      if (tenant) {
+        await this.prisma.tenant.update({
+          where: { id: tenant.id },
+          data: { plan: 'FREE', billingStatus: 'CANCELED', requestLimit: 100 },
+        });
+        this.logger.log(`Tenant ${tenant.id} downgraded to FREE (found by subscriptionId)`);
+      }
+      return;
+    }
     await this.prisma.tenant.update({
       where: { id: tenantId },
-      data: { plan: 'FREE', status: 'ACTIVE' },
+      data: { plan: 'FREE', billingStatus: 'CANCELED', requestLimit: 100 },
     });
     this.logger.log(`Tenant ${tenantId} downgraded to FREE`);
   }
 
   private async handleSubscriptionUpdated(subscription: any) {
     const tenantId = subscription.metadata?.tenantId;
-    if (!tenantId) return;
+    if (!tenantId) {
+      // Fallback: try to find by subscription ID
+      const tenant = await this.prisma.tenant.findFirst({
+        where: { stripeSubscriptionId: subscription.id },
+      });
+      if (!tenant) return;
+      await this.updateTenantPlan(tenant.id, subscription);
+      return;
+    }
+    await this.updateTenantPlan(tenantId, subscription);
+  }
+
+  private async updateTenantPlan(tenantId: string, subscription: any) {
     const priceId = subscription.items?.data?.[0]?.price?.id;
     const planMap: Record<string, string> = {
-      [process.env.STRIPE_PRICE_ID_PRO || '']: 'PRO',
-      [process.env.STRIPE_PRICE_ID_BUSINESS || '']: 'BUSINESS',
-      [process.env.STRIPE_PRICE_ID_ENTERPRISE || '']: 'ENTERPRISE',
+      [process.env.STRIPE_PRICE_PRO || '']: 'PRO',
+      [process.env.STRIPE_PRICE_ENTERPRISE || '']: 'ENTERPRISE',
     };
-    const plan = planMap[priceId || ''] || 'FREE';
+    const plan = planMap[priceId || ''];
+    if (!plan) return;
+
+    const requestLimit = plan === 'PRO' ? 1000 : plan === 'ENTERPRISE' ? 10000 : 100;
+
     await this.prisma.tenant.update({
       where: { id: tenantId },
-      data: { plan: plan as any },
+      data: { plan: plan as any, requestLimit, billingStatus: 'ACTIVE' },
     });
     this.logger.log(`Tenant ${tenantId} plan updated to ${plan}`);
   }

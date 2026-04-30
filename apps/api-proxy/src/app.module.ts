@@ -1,5 +1,6 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
+import { APP_GUARD } from '@nestjs/core';
 import { PrismaModule } from './prisma/prisma.module';
 import { SetupModule } from './modules/setup/setup.module';
 import { InspectorModule } from './modules/inspector/inspector.module';
@@ -16,6 +17,7 @@ import { AdminModule } from './modules/admin/admin.module';
 import { E2EModule } from './modules/e2e/e2e.module';
 import { DlpModule } from './modules/dlp/dlp.module';
 import { RateLimitModule } from './modules/rate-limit/rate-limit.module';
+import { RateLimitGuard } from './common/rate-limit.guard';
 import { ThreatsModule } from './modules/threats/threats.module';
 import { MlModule } from './modules/ml/ml.module';
 import { FeedbackModule } from './modules/feedback/feedback.module';
@@ -50,6 +52,12 @@ import { appConfig } from './config/app.config';
     RateLimitModule,
   ],
   controllers: [AppController],
-  providers: [AlertsGateway],
+  providers: [
+    AlertsGateway,
+    {
+      provide: APP_GUARD,
+      useClass: RateLimitGuard,
+    },
+  ],
 })
 export class AppModule {}

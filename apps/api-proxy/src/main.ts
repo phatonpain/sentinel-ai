@@ -8,7 +8,7 @@ import { HttpExceptionFilter } from './common/http-exception.filter';
 import { SecurityHeadersInterceptor } from './common/security-headers.interceptor';
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
+  const app = await NestFactory.create(AppModule, { rawBody: true });
 
   // Security hardening
   app.use(helmet({
