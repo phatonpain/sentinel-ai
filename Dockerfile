@@ -25,8 +25,10 @@ WORKDIR /app/apps/api-proxy
 # Gera o Prisma Client (necessário em runtime)
 RUN npx prisma generate
 
-# Verificação defensiva — falha o build se o DTO não estiver presente
+# Verificação defensiva — falha o build se os módulos novos não estiverem presentes
 RUN test -f /app/apps/api-proxy/dist/modules/inspector/dto/inspect-request.dto.js
+RUN test -f /app/apps/api-proxy/dist/modules/billing/billing.controller.js
+RUN test -f /app/apps/api-proxy/dist/common/rate-limit.guard.js
 
 EXPOSE 3000
 CMD sh -c "psql \"$DATABASE_URL\" -c 'CREATE SCHEMA IF NOT EXISTS tenant;' || true; npx prisma db push --accept-data-loss || true; npx prisma migrate deploy || true; node dist/main.js"
