@@ -1,1 +1,1 @@
-web: cd apps/api-proxy && node dist/main
+web: cd apps/api-proxy && npx prisma generate && node dist/main
