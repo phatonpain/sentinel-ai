@@ -2,9 +2,8 @@
   "name": "landing",
   "version": "0.1.0",
   "private": true,
-  "packageManager": "npm@10.0.0",
   "engines": {
-    "node": "20.x"
+    "node": ">=18"
   },
   "scripts": {
     "dev": "next dev -p 3002",
