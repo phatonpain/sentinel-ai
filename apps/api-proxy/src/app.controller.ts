@@ -30,7 +30,7 @@ export class AppController {
       timestamp: new Date().toISOString(),
       services: { database: dbStatus, redis: redisStatus },
       databaseError: dbError,
-      deployVersion: 'db-push-2026-04-29-v4',
+      deployVersion: 'stripe-billing-2026-05-01-v1',
       version: process.env.npm_package_version || '1.0.0',
     };
   }
