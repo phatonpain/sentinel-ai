@@ -12,7 +12,7 @@ const app_module_1 = require("./app.module");
 const http_exception_filter_1 = require("./common/http-exception.filter");
 const security_headers_interceptor_1 = require("./common/security-headers.interceptor");
 async function bootstrap() {
-    const app = await core_1.NestFactory.create(app_module_1.AppModule);
+    const app = await core_1.NestFactory.create(app_module_1.AppModule, { rawBody: true });
     // Security hardening
     app.use((0, helmet_1.default)({
         contentSecurityPolicy: {

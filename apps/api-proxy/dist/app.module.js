@@ -9,6 +9,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.AppModule = void 0;
 const common_1 = require("@nestjs/common");
 const config_1 = require("@nestjs/config");
+const core_1 = require("@nestjs/core");
 const prisma_module_1 = require("./prisma/prisma.module");
 const setup_module_1 = require("./modules/setup/setup.module");
 const inspector_module_1 = require("./modules/inspector/inspector.module");
@@ -25,6 +26,7 @@ const admin_module_1 = require("./modules/admin/admin.module");
 const e2e_module_1 = require("./modules/e2e/e2e.module");
 const dlp_module_1 = require("./modules/dlp/dlp.module");
 const rate_limit_module_1 = require("./modules/rate-limit/rate-limit.module");
+const rate_limit_guard_1 = require("./common/rate-limit.guard");
 const threats_module_1 = require("./modules/threats/threats.module");
 const ml_module_1 = require("./modules/ml/ml.module");
 const feedback_module_1 = require("./modules/feedback/feedback.module");
@@ -62,7 +64,13 @@ exports.AppModule = AppModule = __decorate([
             rate_limit_module_1.RateLimitModule,
         ],
         controllers: [app_controller_1.AppController],
-        providers: [alerts_gateway_1.AlertsGateway],
+        providers: [
+            alerts_gateway_1.AlertsGateway,
+            {
+                provide: core_1.APP_GUARD,
+                useClass: rate_limit_guard_1.RateLimitGuard,
+            },
+        ],
     })
 ], AppModule);
 //# sourceMappingURL=app.module.js.map

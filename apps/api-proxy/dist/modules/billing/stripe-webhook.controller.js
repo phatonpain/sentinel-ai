@@ -51,6 +51,11 @@ let StripeWebhookController = StripeWebhookController_1 = class StripeWebhookCon
         }
         this.logger.log(`Stripe event received: ${event.type}`);
         switch (event.type) {
+            case 'checkout.session.completed': {
+                const session = event.data.object;
+                await this.handleCheckoutCompleted(session);
+                break;
+            }
             case 'invoice.payment_succeeded': {
                 const invoice = event.data.object;
                 await this.handlePaymentSucceeded(invoice);
@@ -76,6 +81,26 @@ let StripeWebhookController = StripeWebhookController_1 = class StripeWebhookCon
         }
         return { received: true };
     }
+    async handleCheckoutCompleted(session) {
+        const tenantId = session.metadata?.tenantId;
+        const plan = session.metadata?.plan;
+        if (!tenantId || !plan) {
+            this.logger.warn('Missing tenantId or plan in checkout session metadata');
+            return;
+        }
+        const requestLimit = plan === 'PRO' ? 1000 : plan === 'ENTERPRISE' ? 10000 : 100;
+        await this.prisma.tenant.update({
+            where: { id: tenantId },
+            data: {
+                stripeCustomerId: session.customer,
+                stripeSubscriptionId: session.subscription,
+                plan: plan,
+                billingStatus: 'ACTIVE',
+                requestLimit: requestLimit,
+            },
+        });
+        this.logger.log(`Tenant ${tenantId} upgraded to ${plan} via checkout`);
+    }
     async handlePaymentSucceeded(invoice) {
         const tenantId = invoice.subscription_details?.metadata?.tenantId;
         if (!tenantId) {
@@ -84,7 +109,7 @@ let StripeWebhookController = StripeWebhookController_1 = class StripeWebhookCon
         }
         await this.prisma.tenant.update({
             where: { id: tenantId },
-            data: { status: 'ACTIVE' },
+            data: { status: 'ACTIVE', billingStatus: 'ACTIVE' },
         });
         this.logger.log(`Tenant ${tenantId} activated after payment`);
     }
@@ -94,34 +119,59 @@ let StripeWebhookController = StripeWebhookController_1 = class StripeWebhookCon
             return;
         await this.prisma.tenant.update({
             where: { id: tenantId },
-            data: { status: 'SUSPENDED' },
+            data: { billingStatus: 'PAST_DUE' },
         });
-        this.logger.warn(`Tenant ${tenantId} suspended after payment failure`);
+        this.logger.warn(`Tenant ${tenantId} marked past due after payment failure`);
     }
     async handleSubscriptionDeleted(subscription) {
         const tenantId = subscription.metadata?.tenantId;
-        if (!tenantId)
+        if (!tenantId) {
+            // Fallback: try to find by subscription ID
+            const tenant = await this.prisma.tenant.findFirst({
+                where: { stripeSubscriptionId: subscription.id },
+            });
+            if (tenant) {
+                await this.prisma.tenant.update({
+                    where: { id: tenant.id },
+                    data: { plan: 'FREE', billingStatus: 'CANCELED', requestLimit: 100 },
+                });
+                this.logger.log(`Tenant ${tenant.id} downgraded to FREE (found by subscriptionId)`);
+            }
             return;
+        }
         await this.prisma.tenant.update({
             where: { id: tenantId },
-            data: { plan: 'FREE', status: 'ACTIVE' },
+            data: { plan: 'FREE', billingStatus: 'CANCELED', requestLimit: 100 },
         });
         this.logger.log(`Tenant ${tenantId} downgraded to FREE`);
     }
     async handleSubscriptionUpdated(subscription) {
         const tenantId = subscription.metadata?.tenantId;
-        if (!tenantId)
+        if (!tenantId) {
+            // Fallback: try to find by subscription ID
+            const tenant = await this.prisma.tenant.findFirst({
+                where: { stripeSubscriptionId: subscription.id },
+            });
+            if (!tenant)
+                return;
+            await this.updateTenantPlan(tenant.id, subscription);
             return;
+        }
+        await this.updateTenantPlan(tenantId, subscription);
+    }
+    async updateTenantPlan(tenantId, subscription) {
         const priceId = subscription.items?.data?.[0]?.price?.id;
         const planMap = {
-            [process.env.STRIPE_PRICE_ID_PRO || '']: 'PRO',
-            [process.env.STRIPE_PRICE_ID_BUSINESS || '']: 'BUSINESS',
-            [process.env.STRIPE_PRICE_ID_ENTERPRISE || '']: 'ENTERPRISE',
+            [process.env.STRIPE_PRICE_PRO || '']: 'PRO',
+            [process.env.STRIPE_PRICE_ENTERPRISE || '']: 'ENTERPRISE',
         };
-        const plan = planMap[priceId || ''] || 'FREE';
+        const plan = planMap[priceId || ''];
+        if (!plan)
+            return;
+        const requestLimit = plan === 'PRO' ? 1000 : plan === 'ENTERPRISE' ? 10000 : 100;
         await this.prisma.tenant.update({
             where: { id: tenantId },
-            data: { plan: plan },
+            data: { plan: plan, requestLimit, billingStatus: 'ACTIVE' },
         });
         this.logger.log(`Tenant ${tenantId} plan updated to ${plan}`);
     }
