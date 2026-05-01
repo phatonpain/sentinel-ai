@@ -116,62 +116,6 @@ export function PricingSection() {
     }
   };
 
-  const handlePro = async () => {
-    try {
-      const res = await fetch('/api/checkout', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ plan: 'PRO' }),
-      });
-      const data = await res.json();
-      if (data.url) {
-        window.location.href = data.url;
-      } else {
-        setToast({
-          show: true,
-          type: 'error',
-          title: 'Checkout Error',
-          message: data.error || 'Failed to create checkout session.',
-        });
-      }
-    } catch {
-      setToast({
-        show: true,
-        type: 'error',
-        title: 'Network Error',
-        message: 'Could not connect to checkout. Please try again later.',
-      });
-    }
-  };
-
-  const handleContactSales = async () => {
-    try {
-      const res = await fetch('/api/checkout', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ plan: 'ENTERPRISE' }),
-      });
-      const data = await res.json();
-      if (data.url) {
-        window.location.href = data.url;
-      } else {
-        setToast({
-          show: true,
-          type: 'error',
-          title: 'Checkout Error',
-          message: data.error || 'Failed to create checkout session.',
-        });
-      }
-    } catch {
-      setToast({
-        show: true,
-        type: 'error',
-        title: 'Network Error',
-        message: 'Could not connect to checkout. Please try again later.',
-      });
-    }
-  };
-
   return (
     <>
       <section id="pricing" className="relative py-24">
@@ -254,8 +198,10 @@ export function PricingSection() {
                   </button>
                 )}
                 {plan.name === 'Pro' && (
-                  <button
-                    onClick={handlePro}
+                  <a
+                    href="https://buy.stripe.com/5kQ00c332bvM3Br8mm67S00"
+                    target="_blank"
+                    rel="noopener noreferrer"
                     className={`mt-8 block w-full rounded-xl px-4 py-3 text-center text-sm font-semibold transition-all ${
                       plan.highlighted
                         ? 'bg-gradient-to-r from-sentinel-purple to-sentinel-cyan text-white hover:opacity-90'
@@ -263,11 +209,13 @@ export function PricingSection() {
                     }`}
                   >
                     {plan.cta}
-                  </button>
+                  </a>
                 )}
                 {plan.name === 'Enterprise' && (
-                  <button
-                    onClick={handleContactSales}
+                  <a
+                    href="https://buy.stripe.com/4gMfZadHGbvMfk9cCD67S01"
+                    target="_blank"
+                    rel="noopener noreferrer"
                     className={`mt-8 block w-full rounded-xl px-4 py-3 text-center text-sm font-semibold transition-all ${
                       plan.highlighted
                         ? 'bg-gradient-to-r from-sentinel-purple to-sentinel-cyan text-white hover:opacity-90'
@@ -275,7 +223,7 @@ export function PricingSection() {
                     }`}
                   >
                     {plan.cta}
-                  </button>
+                  </a>
                 )}
               </motion.div>
             ))}
