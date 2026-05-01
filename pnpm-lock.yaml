@@ -182,12 +182,6 @@ importers:
         specifier: ^18.3.0
         version: 18.3.1(react@18.3.1)
     devDependencies:
-      '@sentinel/eslint-config':
-        specifier: workspace:*
-        version: link:../../packages/eslint-config
-      '@sentinel/tsconfig':
-        specifier: workspace:*
-        version: link:../../packages/ts-config
       '@types/node':
         specifier: ^20.0.0
         version: 20.19.39
