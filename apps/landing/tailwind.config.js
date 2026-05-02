@@ -18,9 +18,16 @@ module.exports = {
           600: '#0284c7',
           900: '#0c4a6e',
         },
+        void: '#0A0A0F',
+        neon: {
+          cyan: '#00F0FF',
+          amber: '#FF6B00',
+        },
       },
       fontFamily: {
-        sans: ['Inter', 'Geist', 'system-ui', 'sans-serif'],
+        sans: ['var(--font-space)', 'Inter', 'system-ui', 'sans-serif'],
+        mono: ['var(--font-jetbrains)', 'JetBrains Mono', 'monospace'],
+        display: ['var(--font-space)', 'Inter', 'system-ui', 'sans-serif'],
       },
       animation: {
         'pulse-slow': 'pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite',

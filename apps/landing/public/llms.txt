@@ -1,0 +1,36 @@
+# Sentinel API
+
+Sentinel API is an AI-powered Neural Defense Grid for APIs. It intercepts XSS, SQL Injection, SSRF, and other threats in real-time with an average latency of 21ms.
+
+## Product Description
+
+Sentinel API provides zero-configuration API security through a single HTTP header. Our edge-optimized architecture analyzes headers, SSL/TLS configurations, and payloads using AI behavioral patterns that block zero-day attacks without requiring signatures.
+
+The platform offers a Security Score from 0-100 with actionable recommendations, detailed forensics reports, and multi-tenant isolation for Enterprise customers.
+
+## Links
+
+- Documentation: https://sentinel-ai.one/docs
+- Pricing: https://sentinel-ai.one#pricing
+- GitHub: https://github.com/phatonpain/sentinel-landing
+- Live Demo: https://sentinel-landing-production.up.railway.app
+- API Base URL: https://api-proxy-production-28ff.up.railway.app
+
+## Main API Endpoints
+
+- `POST /v1/inspect` — Analyze a request for threats and vulnerabilities
+- `POST /v1/decide` — Real-time allow/block decision with risk scoring
+- `GET /v1/health` — Service health check
+- `GET /v1/stats` — Usage statistics and metrics
+
+## Tech Stack
+
+- Next.js 14 (App Router)
+- TypeScript
+- Tailwind CSS
+- Framer Motion
+- GSAP + Lenis (smooth scroll)
+- Canvas 2D (neural grid visualization)
+- NestJS (API backend)
+- PostgreSQL + Redis
+- Railway (deployment)
