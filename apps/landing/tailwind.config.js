@@ -7,6 +7,11 @@ module.exports = {
   theme: {
     extend: {
       colors: {
+        primary: '#FF003C',
+        secondary: '#00F0FF',
+        alert: '#FFB800',
+        bg: '#0A0A0F',
+        text: '#E0E0E0',
         sentinel: {
           dark: '#0a0a0f',
           purple: '#8b5cf6',
@@ -25,9 +30,14 @@ module.exports = {
         },
       },
       fontFamily: {
-        sans: ['var(--font-space)', 'Inter', 'system-ui', 'sans-serif'],
-        mono: ['var(--font-jetbrains)', 'JetBrains Mono', 'monospace'],
-        display: ['var(--font-space)', 'Inter', 'system-ui', 'sans-serif'],
+        display: ['var(--font-display)', 'Space Grotesk', 'sans-serif'],
+        body: ['var(--font-body)', 'Inter', 'sans-serif'],
+        mono: ['var(--font-mono)', 'JetBrains Mono', 'monospace'],
+        sans: ['var(--font-body)', 'Inter', 'system-ui', 'sans-serif'],
+      },
+      fontSize: {
+        'hero': ['6rem', { lineHeight: '1', letterSpacing: '-0.02em' }],
+        'headline': ['3rem', { lineHeight: '1.1', letterSpacing: '-0.01em' }],
       },
       animation: {
         'pulse-slow': 'pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite',

@@ -5,8 +5,16 @@
 @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap');
 
 :root {
-  --background: #020204;
-  --foreground: #fafafa;
+  --color-primary: #FF003C;
+  --color-secondary: #00F0FF;
+  --color-alert: #FFB800;
+  --color-bg: #0A0A0F;
+  --color-text: #E0E0E0;
+  --font-display: var(--font-space), 'Space Grotesk', sans-serif;
+  --font-body: var(--font-inter), 'Inter', sans-serif;
+  --font-mono: var(--font-jetbrains), 'JetBrains Mono', monospace;
+  --background: #0A0A0F;
+  --foreground: #E0E0E0;
   --cyan: #00f0ff;
   --fuchsia: #ff006e;
   --amber: #ffbe0b;
@@ -42,37 +50,44 @@ html.lenis body {
 }
 
 body {
-  font-family: var(--font-space, 'Space Grotesk'), 'Inter', system-ui, sans-serif;
-  background-color: var(--background);
-  color: var(--foreground);
+  font-family: var(--font-body);
+  background-color: var(--color-bg);
+  color: var(--color-text);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
 /* Custom scrollbar */
 ::-webkit-scrollbar {
-  width: 8px;
+  width: 6px;
 }
 ::-webkit-scrollbar-track {
-  background: #020204;
+  background: var(--color-bg);
 }
 ::-webkit-scrollbar-thumb {
-  background: #1a1a2e;
-  border-radius: 4px;
-}
-::-webkit-scrollbar-thumb:hover {
-  background: #00f0ff;
+  background: var(--color-secondary);
+  border-radius: 0;
 }
 
 /* Selection */
 ::selection {
-  background: rgba(0, 240, 255, 0.3);
-  color: white;
+  background: var(--color-primary);
+  color: var(--color-bg);
 }
 
 /* Mono font for code */
 .font-mono {
-  font-family: var(--font-jetbrains, 'JetBrains Mono'), monospace;
+  font-family: var(--font-mono);
+}
+
+/* Display font */
+.font-display {
+  font-family: var(--font-display);
+}
+
+/* Body font */
+.font-body {
+  font-family: var(--font-body);
 }
 
 /* Glow effects */
