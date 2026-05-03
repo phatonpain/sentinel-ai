@@ -1,6 +1,7 @@
 'use client';
 
 import { Canvas } from '@react-three/fiber';
+import { EffectComposer, Bloom } from '@react-three/postprocessing';
 import { EnergyScene } from './EnergyScene';
 
 export function EnergyField() {
@@ -13,7 +14,9 @@ export function EnergyField() {
         style={{ background: 'transparent' }}
       >
         <EnergyScene />
-        <ambientLight intensity={0.5} />
+        <EffectComposer>
+          <Bloom intensity={0.4} luminanceThreshold={0.85} luminanceSmoothing={0.5} radius={0.5} />
+        </EffectComposer>
       </Canvas>
     </div>
   );
