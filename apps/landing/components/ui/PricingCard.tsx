@@ -56,6 +56,7 @@ export function PricingCard({
   delay = 0,
 }: PricingCardProps) {
   const style = variants[variant];
+  const isPro = variant === 'pro';
 
   return (
     <motion.div
@@ -81,7 +82,17 @@ export function PricingCard({
         </motion.div>
       )}
 
-      <div className={`${style.card} flex flex-col h-full transition-all duration-500`}>
+      {isPro && (
+        <div
+          className="absolute -inset-1 bg-[#00F0FF]/20 rounded-3xl blur-xl opacity-75 animate-pulse-glow pointer-events-none"
+        />
+      )}
+      <div className={`${style.card} flex flex-col h-full transition-all duration-500 relative`}>
+        {isPro && (
+          <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-[#FFB800] text-[#0A0A0F] font-mono text-xs px-3 py-1 z-10">
+            {'> MAIS_USADO'}
+          </div>
+        )}
         {/* Name */}
         <span
           className="text-sm text-zinc-500 uppercase tracking-widest mb-4"

@@ -75,6 +75,16 @@ body {
   color: var(--color-bg);
 }
 
+/* Cursor custom - hide default on desktop */
+@media (pointer: fine) {
+  body * {
+    cursor: none !important;
+  }
+  input, textarea, [contenteditable="true"] {
+    cursor: text !important;
+  }
+}
+
 /* Mono font for code */
 .font-mono {
   font-family: var(--font-mono);
@@ -126,6 +136,47 @@ body {
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
+}
+
+/* Pulse glow for Pricing Guardian */
+@keyframes pulse-glow {
+  0%, 100% {
+    opacity: 0.5;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.8;
+    transform: scale(1.02);
+  }
+}
+
+.animate-pulse-glow {
+  animation: pulse-glow 2s ease-in-out infinite;
+}
+
+/* Glitch link hover */
+.glitch-link {
+  position: relative;
+  display: inline-block;
+}
+.glitch-link:hover {
+  animation: glitch-border 0.15s ease-in-out 3;
+}
+@keyframes glitch-border {
+  0%, 100% { border-color: transparent; }
+  50% { border-color: #FF003C; }
+}
+
+/* Button glow utilities */
+.btn-glow-cyan:hover {
+  background: rgba(0, 240, 255, 0.1);
+  box-shadow: 0 0 20px rgba(0, 240, 255, 0.3), 0 0 40px rgba(0, 240, 255, 0.1);
+  transform: scale(1.02);
+}
+.btn-glow-red:hover {
+  background: rgba(255, 0, 60, 0.1);
+  box-shadow: 0 0 20px rgba(255, 0, 60, 0.3), 0 0 40px rgba(255, 0, 60, 0.1);
+  transform: scale(1.02);
 }
 
 /* Noise texture overlay */

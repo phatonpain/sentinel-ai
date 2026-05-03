@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Inter, Space_Grotesk, JetBrains_Mono } from "next/font/google";
 import { Providers } from "@/components/providers";
+import CustomCursor from "@/components/cursor/CustomCursor";
 import "./globals.css";
 
 const spaceGrotesk = Space_Grotesk({
@@ -139,6 +140,7 @@ export default function RootLayout({
         >
           Skip to main content
         </a>
+        <CustomCursor />
         <Providers>{children}</Providers>
       </body>
     </html>
