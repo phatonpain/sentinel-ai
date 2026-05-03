@@ -40,3 +40,4 @@ coverage/
 *.tgz
 
 apps/landing-backup/
+.vercel
