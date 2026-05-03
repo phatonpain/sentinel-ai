@@ -146,7 +146,7 @@ export function Act2_Attack() {
   }, []);
 
   return (
-    <section ref={containerRef} className="relative h-[100vh] md:h-[200vh]">
+    <section ref={containerRef} className="relative h-[100vh] md:h-[200vh]" style={{ contentVisibility: 'auto', containIntrinsicSize: '0 500px' }}>
       {/* Hidden heading for hierarchy */}
       <h2 className="sr-only">The Attack</h2>
 

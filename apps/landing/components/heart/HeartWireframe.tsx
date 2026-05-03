@@ -49,7 +49,7 @@ function HeartMesh({ pulse }: { pulse: boolean }) {
 
 export default function HeartWireframe({ pulse = false }: { pulse?: boolean }) {
   return (
-    <div className="w-[300px] h-[300px]">
+    <div className="w-[300px] h-[300px]" role="img" aria-label="Coração 3D wireframe pulsando em tempo real">
       <Canvas
         camera={{ position: [0, 0, 3], fov: 50 }}
         gl={{ alpha: true, antialias: true }}

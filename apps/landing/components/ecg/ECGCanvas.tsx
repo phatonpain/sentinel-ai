@@ -151,6 +151,8 @@ export default function ECGCanvas({ apiUrl, onHeartbeat }: ECGCanvasProps) {
       ref={canvasRef}
       className="w-full h-[200px] cursor-pointer"
       style={{ background: 'transparent' }}
+      role="img"
+      aria-label="ECG em tempo real mostrando batimentos da API"
     />
   );
 }

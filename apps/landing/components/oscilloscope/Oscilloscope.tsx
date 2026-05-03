@@ -180,6 +180,8 @@ export default function Oscilloscope({ isScanning, threatDetected, onAudioInit }
         ref={canvasRef}
         className="w-full h-[300px] cursor-pointer rounded border border-secondary/20"
         onClick={initAudio}
+        role="img"
+        aria-label="Osciloscópio sonoro com 4 canais de requisições HTTP"
       />
       {!audioInitialized && (
         <div className="absolute inset-0 flex items-center justify-center bg-bg/80 rounded">
