@@ -9,6 +9,11 @@ const DemoVisualizerDynamic = dynamic(
   { ssr: false }
 );
 
+const Oscilloscope = dynamic(
+  () => import('@/components/oscilloscope/Oscilloscope'),
+  { ssr: false }
+);
+
 interface ScanResult {
   score: number;
   verdict: string;
@@ -27,12 +32,15 @@ export function Act4_Demo() {
   const [error, setError] = useState(false);
   const [result, setResult] = useState<ScanResult | null>(null);
   const [inputShake, setInputShake] = useState(false);
+  const [threatDetected, setThreatDetected] = useState(false);
+  const [audioInitialized, setAudioInitialized] = useState(false);
 
   const reset = useCallback(() => {
     setStep(0);
     setError(false);
     setResult(null);
     setInputShake(false);
+    setThreatDetected(false);
   }, []);
 
   const handleScan = async () => {
@@ -79,6 +87,8 @@ export function Act4_Demo() {
 
         if (!res.ok) throw new Error('API error');
         const data = await res.json();
+        const hasThreat = data?.decision?.verdict === 'BLOCK' || (data?.forensics?.vulnerabilities?.length > 0);
+        setThreatDetected(hasThreat);
         return {
           score: data?.decision?.riskScore ?? data?.riskScore ?? 85,
           verdict: data?.decision?.verdict ?? data?.verdict ?? 'ALLOW',
@@ -91,6 +101,7 @@ export function Act4_Demo() {
       } catch {
         // Fallback mock data with simulated delay
         await delay(500);
+        setThreatDetected(false);
         return {
           score: 85,
           verdict: 'ALLOW',
@@ -230,6 +241,41 @@ export function Act4_Demo() {
               className="rounded-2xl border border-white/5 bg-[#0a0a0f]/80 backdrop-blur-sm overflow-hidden"
             >
               <DemoVisualizerDynamic step={step} error={error} result={result} />
+            </motion.div>
+          )}
+        </AnimatePresence>
+
+        {/* Oscilloscope ESTÁTICA */}
+        <AnimatePresence>
+          {(isScanning || audioInitialized) && (
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: 20 }}
+              transition={{ duration: 0.5 }}
+              className="mt-8"
+            >
+              <div className="flex items-center gap-2 mb-3">
+                <span className="text-xs font-mono text-secondary">{'>'} ESTÁTICA_OSCILOSCÓPIO</span>
+                <span className="relative flex h-2 w-2">
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-secondary opacity-75" />
+                  <span className="relative inline-flex rounded-full h-2 w-2 bg-secondary" />
+                </span>
+              </div>
+              <Oscilloscope
+                isScanning={isScanning}
+                threatDetected={threatDetected}
+                onAudioInit={() => setAudioInitialized(true)}
+              />
+              {!isScanning && result && (
+                <div className="mt-3 font-mono text-sm text-center">
+                  {threatDetected ? (
+                    <span className="text-primary">{'[ AMEAÇA DETECTADA ]'}</span>
+                  ) : (
+                    <span className="text-secondary">{'[ LIMPO — 21ms ]'}</span>
+                  )}
+                </div>
+              )}
             </motion.div>
           )}
         </AnimatePresence>

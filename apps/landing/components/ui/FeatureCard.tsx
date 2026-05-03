@@ -130,7 +130,7 @@ export function FeatureCard({ feature, layout }: FeatureCardProps) {
   return (
     <div
       ref={ref}
-      className={`relative flex flex-col md:flex-row items-center gap-8 md:gap-16 py-12 md:py-24 ${
+      className={`feature-card relative flex flex-col md:flex-row items-center gap-8 md:gap-16 py-12 md:py-24 ${
         isLeft ? 'md:flex-row' : 'md:flex-row-reverse'
       }`}
       onMouseEnter={() => setHovered(true)}
