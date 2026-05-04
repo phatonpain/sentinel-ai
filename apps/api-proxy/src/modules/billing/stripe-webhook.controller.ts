@@ -81,7 +81,10 @@ export class StripeWebhookController {
       return;
     }
 
-    const requestLimit = plan === 'PRO' ? 1000 : plan === 'ENTERPRISE' ? 10000 : 100;
+    const requestLimit =
+      plan === 'GUARDIAN' || plan === 'PRO' ? 5000 :
+      plan === 'SENTINEL' ? 25000 :
+      plan === 'ENTERPRISE' ? 1000000 : 100;
 
     await this.prisma.tenant.update({
       where: { id: tenantId },
@@ -160,13 +163,17 @@ export class StripeWebhookController {
   private async updateTenantPlan(tenantId: string, subscription: any) {
     const priceId = subscription.items?.data?.[0]?.price?.id;
     const planMap: Record<string, string> = {
-      [process.env.STRIPE_PRICE_PRO || '']: 'PRO',
+      [process.env.STRIPE_PRICE_GUARDIAN || process.env.STRIPE_PRICE_PRO || '']: 'GUARDIAN',
+      [process.env.STRIPE_PRICE_SENTINEL || process.env.STRIPE_PRICE_ENTERPRISE || '']: 'SENTINEL',
       [process.env.STRIPE_PRICE_ENTERPRISE || '']: 'ENTERPRISE',
     };
     const plan = planMap[priceId || ''];
     if (!plan) return;
 
-    const requestLimit = plan === 'PRO' ? 1000 : plan === 'ENTERPRISE' ? 10000 : 100;
+    const requestLimit =
+      plan === 'GUARDIAN' || plan === 'PRO' ? 5000 :
+      plan === 'SENTINEL' ? 25000 :
+      plan === 'ENTERPRISE' ? 1000000 : 100;
 
     await this.prisma.tenant.update({
       where: { id: tenantId },

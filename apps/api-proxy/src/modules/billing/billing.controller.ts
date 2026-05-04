@@ -23,7 +23,7 @@ export class BillingController {
   @ApiResponse({ status: 401, description: 'Invalid API key' })
   async createCheckoutSession(
     @Headers('x-sentinel-api-key') apiKey: string,
-    @Body() body: { plan: 'PRO' | 'ENTERPRISE' },
+    @Body() body: { plan: 'GUARDIAN' | 'SENTINEL' | 'ENTERPRISE' | 'PRO' },
   ) {
     if (!apiKey) {
       throw new UnauthorizedException('Missing X-Sentinel-Api-Key header');
@@ -39,10 +39,13 @@ export class BillingController {
     }
 
     const tenant = keyRecord.tenant;
+    const plan = body.plan === 'PRO' ? 'GUARDIAN' : body.plan;
     const priceId =
-      body.plan === 'PRO'
-        ? process.env.STRIPE_PRICE_PRO
-        : process.env.STRIPE_PRICE_ENTERPRISE;
+      plan === 'GUARDIAN'
+        ? process.env.STRIPE_PRICE_GUARDIAN || process.env.STRIPE_PRICE_PRO
+        : plan === 'SENTINEL'
+          ? process.env.STRIPE_PRICE_SENTINEL || process.env.STRIPE_PRICE_ENTERPRISE
+          : process.env.STRIPE_PRICE_ENTERPRISE;
 
     if (!priceId) {
       throw new BadRequestException(`Price ID not configured for plan ${body.plan}`);

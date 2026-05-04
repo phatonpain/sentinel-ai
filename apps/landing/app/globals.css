@@ -2,8 +2,6 @@
 @tailwind components;
 @tailwind utilities;
 
-@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap');
-
 :root {
   --color-primary: #FF003C;
   --color-secondary: #00F0FF;
@@ -15,38 +13,10 @@
   --font-mono: var(--font-jetbrains), 'JetBrains Mono', monospace;
   --background: #0A0A0F;
   --foreground: #E0E0E0;
-  --cyan: #00f0ff;
-  --fuchsia: #ff006e;
-  --amber: #ffbe0b;
-  --void: #0a0a0f;
-  --color-void: #0A0A0F;
-  --color-cyan: #00F0FF;
-  --color-amber: #FF6B00;
-  --color-surface: rgba(255, 255, 255, 0.03);
-  --color-border: rgba(0, 240, 255, 0.1);
-  --ease-expo: cubic-bezier(0.16, 1, 0.3, 1);
-  --ease-elastic: cubic-bezier(0.68, -0.55, 0.265, 1.55);
 }
 
 html {
-  scroll-behavior: auto; /* Lenis handles smooth scroll */
-}
-
-html.lenis,
-html.lenis body {
-  height: auto;
-}
-
-.lenis.lenis-smooth {
-  scroll-behavior: auto !important;
-}
-
-.lenis.lenis-smooth [data-lenis-prevent] {
-  overscroll-behavior: contain;
-}
-
-.lenis.lenis-stopped {
-  overflow: hidden;
+  scroll-behavior: smooth;
 }
 
 body {
@@ -65,24 +35,14 @@ body {
   background: var(--color-bg);
 }
 ::-webkit-scrollbar-thumb {
-  background: var(--color-secondary);
-  border-radius: 0;
+  background: var(--color-primary);
+  border-radius: 3px;
 }
 
 /* Selection */
 ::selection {
   background: var(--color-primary);
-  color: var(--color-bg);
-}
-
-/* Cursor custom - hide default on desktop */
-@media (pointer: fine) {
-  body * {
-    cursor: none !important;
-  }
-  input, textarea, [contenteditable="true"] {
-    cursor: text !important;
-  }
+  color: white;
 }
 
 /* Focus states for accessibility */
@@ -94,109 +54,15 @@ body {
   outline: none;
 }
 
-/* Mono font for code */
+/* Font utilities */
 .font-mono {
   font-family: var(--font-mono);
 }
-
-/* Display font */
 .font-display {
   font-family: var(--font-display);
 }
-
-/* Body font */
 .font-body {
   font-family: var(--font-body);
-}
-
-/* Glow effects */
-.glow-cyan {
-  box-shadow: 0 0 20px rgba(0, 240, 255, 0.3);
-}
-.glow-amber {
-  box-shadow: 0 0 20px rgba(255, 107, 0, 0.3);
-}
-.glow-fuchsia {
-  box-shadow: 0 0 20px rgba(255, 0, 110, 0.3);
-}
-
-/* Pulsing glow for CTA buttons */
-.glow-pulse {
-  animation: glowPulse 3s ease-in-out infinite;
-}
-
-@keyframes glowPulse {
-  0%, 100% {
-    box-shadow: 0 0 20px rgba(0, 240, 255, 0.3);
-  }
-  50% {
-    box-shadow: 0 0 30px rgba(0, 240, 255, 0.5);
-  }
-}
-
-.glow-pulse:hover {
-  animation: none;
-  box-shadow: 0 0 40px rgba(0, 240, 255, 0.6);
-}
-
-/* Gradient text utility */
-.text-gradient {
-  background: linear-gradient(135deg, #00f0ff 0%, #ff006e 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-}
-
-/* Pulse glow for Pricing Guardian */
-@keyframes pulse-glow {
-  0%, 100% {
-    opacity: 0.5;
-    transform: scale(1);
-  }
-  50% {
-    opacity: 0.8;
-    transform: scale(1.02);
-  }
-}
-
-.animate-pulse-glow {
-  animation: pulse-glow 2s ease-in-out infinite;
-}
-
-/* Glitch link hover */
-.glitch-link {
-  position: relative;
-  display: inline-block;
-}
-.glitch-link:hover {
-  animation: glitch-border 0.15s ease-in-out 3;
-}
-@keyframes glitch-border {
-  0%, 100% { border-color: transparent; }
-  50% { border-color: #FF003C; }
-}
-
-/* Button glow utilities */
-.btn-glow-cyan:hover {
-  background: rgba(0, 240, 255, 0.1);
-  box-shadow: 0 0 20px rgba(0, 240, 255, 0.3), 0 0 40px rgba(0, 240, 255, 0.1);
-  transform: scale(1.02);
-}
-.btn-glow-red:hover {
-  background: rgba(255, 0, 60, 0.1);
-  box-shadow: 0 0 20px rgba(255, 0, 60, 0.3), 0 0 40px rgba(255, 0, 60, 0.1);
-  transform: scale(1.02);
-}
-
-/* Noise texture overlay */
-.noise::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
-  opacity: 0.03;
-  pointer-events: none;
-  z-index: 1;
 }
 
 @layer base {
